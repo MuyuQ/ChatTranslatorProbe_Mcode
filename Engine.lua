@@ -4,7 +4,7 @@ local P = McodeChatProbe
 local unpack = unpack
 local function pack(...) return { n = select("#", ...), ... } end
 P.Pack = pack
-P.version = "0.17.8"
+P.version = "0.17.9"
 
 -- Use the event language field, never words in the player's message body.
 function P.IsCommonLanguage(language)
@@ -19,16 +19,16 @@ end
 P.concepts = {
     disc = { label = "戒牧", aliases = { "discipline priest", "disc priest", "discpriest", "disciplinepriest", "disco", "disci", "discp", "disc" }, role = true, guard = "disc" },
     shadow = { label = "暗牧", aliases = { "shadow priest", "shadowpriest", "spriest", "sh priest", "shp", "sp" }, role = true, guard = "shadow" },
-    rsham = { label = "奶萨", aliases = { "restoration shaman", "restro", "resto shaman", "restoshaman", "restorationshaman", "rshaman", "rshammy", "rshama", "rshamnmy", "rshamy", "rshami", "rshmy", "rsham" }, role = true },
+    rsham = { label = "奶萨", aliases = { "restoration shaman", "restro", "resto shaman", "restoshaman", "restorationshaman", "rshaman", "rshammy", "rshama", "rshamnmy", "rshamy", "rshami", "rshmy", "rsham", "rcham", "rshamm", "rshamn" }, role = true },
     shaman = { label = "萨满", aliases = { "shaman", "shammy", "shama", "chaman", "chamy", "cham", "sham" }, role = true, guard = "roster" },
     balance = { label = "鸟德", aliases = { "balance druid", "boomkin", "boomie", "boomy", "bommie", "boomi", "bomie", "bmmie", "bommier", "boomky", "bomy", "boom", "balance" }, role = true, guard = "balance" },
-    rdudu = { label = "奶德", aliases = { "restoration druid", "resto druid", "restodruid", "restorationdruid", "rdruid", "rdudu", "rdude" }, role = true, guard = "restodruid" },
+    rdudu = { label = "奶德", aliases = { "restoration druid", "resto druid", "restodruid", "restorationdruid", "rdruid", "rdudu", "rdude", "rdudud", "tree" }, role = true, guard = "restodruid" },
     ret = { label = "惩戒骑", aliases = { "retribution paladin", "ret paladin", "ret pally", "retpala", "retpally", "retpaladin", "retributionpaladin", "rpala", "rpally", "rpaladin", "retri", "retry", "ret" }, role = true, guard = "recruit" },
-    hpala = { label = "奶骑", aliases = { "holy paladin", "holy pally", "holypala", "holypally", "holypaladin", "hpaladin", "hpally", "hpala", "hpall", "hpal" }, role = true },
+    hpala = { label = "奶骑", aliases = { "holy paladin", "holy pally", "holypala", "holypally", "holypaladin", "hpaladin", "hpally", "hpala", "hpall", "hpal", "holy pala" }, role = true },
     demo = { label = "恶魔术", aliases = { "demonology warlock", "demo lock", "demo warlock", "demolock", "demowarlock", "demonologywarlock", "demon", "demo" }, role = true, guard = "demo" },
     fury = { label = "狂暴战", aliases = { "fury warrior", "fury war", "fwarr", "fwar", "fury" }, role = true, guard = "roster" },
     bdk = { label = "血DK", aliases = { "blood death knight", "blood dk", "bdk" }, role = true, guard = "roster" },
-    udk = { label = "邪DK", aliases = { "unholy death knight", "unholy dk", "unholy", "undk", "uh dk", "uhdk", "udk" }, role = true, guard = "roster" },
+    udk = { label = "邪DK", aliases = { "unholy death knight", "unholy dk", "unholy", "undk", "uh dk", "uhdk", "udk", "unh" }, role = true, guard = "roster" },
     enh = { label = "增强萨", aliases = { "enhancement shaman", "enh shaman", "enhshaman", "enhancementshaman", "enha", "enh" }, role = true, guard = "enh" },
     ppala = { label = "防骑", aliases = { "protection paladin", "prot paladin", "prot pally", "prot pala", "protpala", "protpally", "protpaladin", "protectionpaladin", "ppaladin", "propala", "ppla", "pala tank", "pprot", "ppala", "ppal" }, role = true, guard = "roster" },
     dk = { label = "DK", aliases = { "death knight", "dk" }, role = true, guard = "roster" },
@@ -36,11 +36,11 @@ P.concepts = {
     warlock = { label = "术士", aliases = { "warlock", "wlock", "lok", "lock" }, role = true, guard = "roster" },
     mage = { label = "法师", aliases = { "mage", "mag" }, role = true, guard = "roster" },
     hunter = { label = "猎人", aliases = { "hunter", "huntr", "hunt" }, role = true, guard = "roster" },
-    rogue = { label = "盗贼", aliases = { "rogue", "rouge", "rog", "roge" }, role = true, guard = "roster" },
+    rogue = { label = "盗贼", aliases = { "rogue", "rouge", "rog", "roge", "rougue" }, role = true, guard = "roster" },
     dps = { label = "输出", aliases = { "dpss", "dps" }, role = true, guard = "recruit" },
     mt = { label = "主T", aliases = { "main tank", "mt" }, role = true, guard = "roster" },
     tank = { label = "坦克", aliases = { "tanks", "tank" }, role = true, guard = "recruit" },
-    healer = { label = "治疗", aliases = { "healers", "healer", "healr", "heller", "heler", "heals", "hael", "heal" }, role = true, guard = "recruit" },
+    healer = { label = "治疗", aliases = { "healers", "healer", "healr", "heller", "heler", "heals", "hael", "heal", "helers" }, role = true, guard = "recruit" },
     ranged = { label = "远程", aliases = { "ranged dps", "rdps", "ranged", "range" }, role = true, guard = "recruit" },
     melee = { label = "近战", aliases = { "melee dps", "mdps", "melee" }, role = true, guard = "recruit" },
     lfm = { label = "队伍招人", aliases = { "looking for more", "lf5m", "lf4m", "lf3m", "lf2m", "lf1m", "lfm", "lf" } },
@@ -70,25 +70,25 @@ P.concepts = {
     gs = { label = "装备评分", aliases = { "gearscore", "gear score", "gs" }, guard = "recruit" },
     boe = { label = "装绑", aliases = { "bind on equip", "boes", "boe", "boee" }, guard = "advert" },
     sfs = { label = "影霜碎片", aliases = { "shadowfrost shards", "sfs" } },
-    primo = { label = "源生萨隆邪铁", aliases = { "primordial saronite", "primos", "primo" }, guard = "recruit" },
+    primo = { label = "源生萨隆邪铁", aliases = { "primordial saronite", "primos", "primo", "primordials" }, guard = "advert" },
     sts = { label = "锐锋暮光龙鳞", aliases = { "sharpened twilight scale", "sts" }, guard = "advert" },
-    reserved = { label = "不分", aliases = { "reserved", "reserve", "resv", "rezz", "ress", "res" }, guard = "reserve" },
+    reserved = { label = "不分", aliases = { "reserved", "reserve", "resv", "rezz", "ress", "res", "rez" }, guard = "reserve" },
     tocreserved = { label = "装绑物品、十字军宝珠和专业图纸不分",
         aliases = { "b+o+p ress", "b+o+p res", "b+o+p reserved",
             "b + o + p ress", "b + o + p res", "b + o + p reserved",
-            "b+o+p boe ress", "b+o+p boe res", "b+o+p boe reserved" }, guard = "tocloot" },
+            "b+o+p boe ress", "b+o+p boe res", "b+o+p boe reserved", "bop ress", "bop res", "bop reserved" }, guard = "tocloot" },
     noreserved = { label = "无预留", aliases = { "nothing reserved", "nothing resss", "nothing ress", "nothing res",
         "no items reserved", "no loot reserved", "no res", "no ress", "no reserved" }, guard = "lootnegative" },
     tmog = { label = "幻化外观", aliases = { "transmog", "tmog", "mog" } },
-    achievement = { label = "成就", aliases = { "achievement", "achievements", "achiv", "achviv", "achievments", "achiev", "achie", "achi", "ach", "acho", "achive", "achieve", "achivement", "achivment", "acihvment", "achv" }, guard = "advert" },
-    linkachievement = { label = "发成就", aliases = { "link achievement", "link achievements", "link achviv", "link achiv", "link achiev", "link achie", "link achi", "link achive", "link achieve", "link achivement" }, guard = "recruit" },
+    achievement = { label = "成就", aliases = { "achievement", "achievements", "achiv", "achviv", "achievments", "achiev", "achie", "achi", "ach", "acho", "achive", "achieve", "achivement", "achivment", "acihvment", "achv", "achvie" }, guard = "advert" },
+    linkachievement = { label = "发成就", aliases = { "link achievement", "link achievements", "link achviv", "link achiv", "link achiev", "link achie", "link achi", "link achive", "link achieve", "link achivement", "link me your achive", "link me your achievement", "link me your achiv" }, guard = "recruit" },
     solotank = { label = "单坦克", aliases = { "solo tank" }, guard = "recruit" },
     soloheal = { label = "单治疗", aliases = { "solo heal" }, guard = "recruit" },
     fullrun = { label = "全程团", aliases = { "full runs", "full run" }, guard = "recruit" },
     altrun = { label = "小号团", aliases = { "alt run", "alt runs" }, guard = "recruit" },
     freshrun = { label = "从头开打的团", aliases = { "fresh run", "fresh" }, guard = "recruit" },
     fastrun = { label = "速刷团", aliases = { "speed runs", "speed run", "fast runs", "fast run", "quick runs", "quick run", "fast clear", "fast" }, guard = "recruit" },
-    lastspot = { label = "最后一个位置", aliases = { "lasts spots", "last slots", "last stop", "last spot" }, guard = "recruit" },
+    lastspot = { label = "最后一个位置", aliases = { "lasts spots", "last slots", "last stop", "last spot", "last slot" }, guard = "recruit" },
     lastneed = { label = "最后还缺", aliases = { "last" }, guard = "lastneed" },
     restdps = { label = "其余招输出", aliases = { "rest dps" }, guard = "recruit" },
     bane = { label = "10人英雄巫妖王成就团", aliases = { "bane run" }, guard = "bane" },
@@ -100,7 +100,7 @@ P.concepts = {
     servertime = { label = "服务器时间", aliases = { "server time", "svt", "st" }, guard = "servertime" },
     quest = { label = "任务", aliases = { "quest" }, guard = "recruit" },
     onboss = { label = "首领掉落", aliases = { "on boss", "on-boss" }, guard = "bossloot" },
-    whisper = { label = "私聊我", aliases = { "/w me", "w/me", "w.me", "whisper me", "whisp me", "wisp me", "wiss me", "wis me", "whis me", "wisper", "dm me", "pst" }, guard = "advert" },
+    whisper = { label = "私聊我", aliases = { "/w me", "w/me", "w.me", "whisper me", "whisp me", "wisp me", "wiss me", "wis me", "whis me", "wisper", "dm me", "pst", "wisper me" }, guard = "advert" },
     whispergear = { label = "私聊发装备评分", aliases = { "w/gs" }, guard = "recruit" },
     whisperinvite = { label = "私聊申请进组", aliases = { "whisp for inv", "whisper for inv", "pst for inv" }, guard = "recruit" },
     whisperrequest = { label = "私聊发", aliases = { "/w", "w/", "wisp", "whisp", "wis", "whis", "wiss", "w" }, guard = "whisperrequest" },
@@ -142,7 +142,7 @@ P.concepts = {
     umbrage = { label = "荫影臂甲", aliases = { "umbrage armbands", "umbrage" }, guard = "trade" },
     trinketfarm = { label = "刷饰品", aliases = { "trinket farm" }, guard = "recruit" },
     arenaask = { label = "寻找竞技场队友", aliases = { "lf arena partner", "looking for arena partner", "looking for a 2v2 partner", "looking for 2v2 partner", "lf 2 v2 partner", "lf 2 vs2 partner", "lf 3 v3 partner", "lf 2 v2", "lf 2 vs2", "lf 3 v3", "lf 5 v5", "lf 2 s", "lf 3 s", "lf 5 s", "2 vs 2", "3 vs 3", "5 vs 5", "lf partner" }, guard = "arena" },
-    bis = { label = "毕业装", aliases = { "best in slot", "bis" }, guard = "advert" },
+    bis = { label = "毕业装", aliases = { "best in slot", "bis", "biss" }, guard = "advert" },
     arenagames = { label = "场", aliases = { "games", "arenas", "arena" }, guard = "arena" },
     arenamore = { label = "或更多", aliases = { "or more" }, guard = "arena" },
     sunwell = { label = "太阳之井高地", aliases = { "sunwell plateau", "sunwell" }, guard = "recruit", category = "副本" },
@@ -160,10 +160,10 @@ P.concepts = {
     casterback = { label = "法系披风", aliases = { "back spell", "spell back" }, guard = "rubybackloot" },
     memorial = { label = "达拉然纪念碑", aliases = { "memo" }, guard = "memorial" },
     paladin = { label = "圣骑士", aliases = { "paladin", "pally", "pala", "pal" }, guard = "roster", role = true },
-    druid = { label = "德鲁伊", aliases = { "druid" }, guard = "roster", role = true },
-    priest = { label = "牧师", aliases = { "priest", "prist" }, guard = "roster", role = true },
-    combatrogue = { label = "战斗贼", aliases = { "combat rogue", "combatrogue", "crogue" }, guard = "roster", role = true },
-    feralcat = { label = "猫德", aliases = { "feral cat", "cat druid", "cat" }, guard = "roster", role = true },
+    druid = { label = "德鲁伊", aliases = { "druid", "dudu" }, guard = "roster", role = true },
+    priest = { label = "牧师", aliases = { "priest", "prist", "pirest" }, guard = "roster", role = true },
+    combatrogue = { label = "战斗贼", aliases = { "combat rogue", "combatrogue", "crogue", "crog" }, guard = "roster", role = true },
+    feralcat = { label = "猫德", aliases = { "feral cat", "cat druid", "cat", "dcat" }, guard = "roster", role = true },
     feral = { label = "野德", aliases = { "feral druid", "feral" }, guard = "roster", role = true },
     fmagerole = { label = "法师（Fmage）", aliases = { "fmage" }, guard = "roster", role = true },
     dlockrole = { label = "术士（Dlock）", aliases = { "dlock" }, guard = "roster", role = true },
@@ -237,10 +237,10 @@ P.concepts = {
     engineering = { label = "工程", aliases = { "engineering", "engi", "eng" }, guard = "advert" },
     herbalism = { label = "草药", aliases = { "herbalism" }, guard = "advert" },
     ele = { label = "元素萨", aliases = { "elemental shaman", "ele shaman", "ele shamy", "ele" }, role = true, guard = "ele" },
-    protwarrior = { label = "防战", aliases = { "protection warrior", "prot warrior", "protection war", "prot war" }, role = true, guard = "roster" },
+    protwarrior = { label = "防战", aliases = { "protection warrior", "prot warrior", "protection war", "prot war", "pwar" }, role = true, guard = "roster" },
     dongon = { label = "地下城", aliases = { "dungeon", "dungeons", "dongon" }, guard = "recruit" },
     doing = { label = "开", aliases = { "doing" }, guard = "recruit" },
-    run = { label = "团", aliases = { "runs", "run" }, guard = "recruit" },
+    run = { label = "团", aliases = { "runs", "run", "runn" }, guard = "recruit" },
     man = { label = "人", aliases = { "man", "men", "m" }, guard = "raidsize" },
     moreplayers = { label = "人（还缺）", aliases = { "more" }, guard = "moreneeded" },
     fulltrail = { label = "全程", aliases = { "full" }, guard = "fulltrail" },
@@ -250,7 +250,7 @@ P.concepts = {
     andgo = { label = "人齐就走", aliases = { "and goooo", "and gooo", "and go" }, guard = "recruit" },
     dc = { label = "掉线", aliases = { "dc", "disconnect", "disconnected" }, guard = "recruit" },
     farm = { label = "刷取", aliases = { "farming", "farm" }, guard = "advert" },
-    mountrun = { label = "坐骑团", aliases = { "mount run", "mount runs" }, guard = "recruit" },
+    mountrun = { label = "坐骑团", aliases = { "mount run", "mount runs", "mount runn" }, guard = "recruit" },
     bosses = { label = "首领", aliases = { "bosses", "boss" }, guard = "recruit" },
     lastboss = { label = "尾王", aliases = { "last bosses", "last boss" }, guard = "recruit" },
     repfarm = { label = "声望团", aliases = { "farm rep", "rep farm", "rep farms", "rep run", "rep runs" }, guard = "recruit" },
@@ -310,24 +310,41 @@ P.concepts = {
     iccbp = { label = "装绑+萨钢", aliases = { "b+primos", "b+primo", "b+p" }, guard = "iccboss" },
     onixya = { label = "黑龙妹", aliases = { "onixya", "onyxya" }, guard = "recruit", category = "首领/otherraid" },
     stormingcitadel = { label = "攻城拔寨", aliases = { "storming the citadel" }, category = "成就/icc" },
-    valanyr = { label = "瓦兰奈尔", aliases = { "valynar", "val'anyr" } },
+    valanyr = { label = "瓦兰奈尔", aliases = { "valynar", "val'anyr", "valanyr", "valnyr" } },
     req = { label = "要求", aliases = { "reqs", "req" }, guard = "recruit" },
     summon = { label = "召唤", aliases = { "summ", "summon" }, guard = "recruit" },
     ready = { label = "就绪", aliases = { "rdy", "ready" }, guard = "recruit" },
     queue = { label = "排队", aliases = { "que", "queue" }, guard = "recruit" },
     classrun = { label = "职业团", aliases = { "class runs", "class run" }, guard = "recruit" },
     trinket = { label = "饰品", aliases = { "trinkets", "trinket" }, guard = "advert" },
-    weapon = { label = "武器", aliases = { "weapons", "weapon" }, guard = "advert" },
+    weapon = { label = "武器", aliases = { "weapons", "weapon", "wepon" }, guard = "advert" },
     titles = { label = "头衔", aliases = { "titles", "title" }, guard = "advert" },
     brain = { label = "带脑子", aliases = { "brain" }, guard = "recruit" },
     hellfire = { label = "地狱火半岛", aliases = { "hellfire" } },
     atm = { label = "现在", aliases = { "atm" }, guard = "recruit" },
-    warglaive = { label = "蛋刀", aliases = { "warglaives", "warglaive" }, guard = "recruit" },
+    warglaive = { label = "蛋刀", aliases = { "warglaives", "warglaive", "azzinot" }, guard = "recruit" },
     offhand = { label = "副手", aliases = { "offhand", "off-hand", "off hand" }, guard = "recruit" },
     must = { label = "必须", aliases = { "must have", "must wis", "must be" }, guard = "raidrequirement" },
     free = { label = "免费", aliases = { "free" }, guard = "recruit" },
     customized = { label = "定制团", aliases = { "customized runs", "customized run", "custom runs", "custom run" }, guard = "recruit" },
     freeroll = { label = "免费掷点", aliases = { "free roll", "free rolls" }, guard = "recruit" },
+    holypriest = { label = "神牧", aliases = { "holy priest", "holypriest", "hpriest" }, role = true, guard = "roster" },
+    feralbear = { label = "熊T", aliases = { "bear druid", "feral tank", "bear" }, role = true, guard = "bearrole" },
+    protection = { label = "防护专精", aliases = { "prot" }, role = true, guard = "roster" },
+    cts = { label = "焦黑暮光龙鳞", aliases = { "charred twilight scale", "cts" }, guard = "advert" },
+    muradinspyglass = { label = "穆拉丁的望远镜", aliases = { "muradin's spyglass", "muradins spyglass", "spyglass" }, guard = "iccboss" },
+    tocboepatterns = { label = "装绑物品和专业图纸不分", aliases = { "boe p ress", "boe p res", "boe+p ress", "boe+p res" }, guard = "tocloot" },
+    whisperscore = { label = "私聊发装备评分", aliases = { "/w me with gs" }, guard = "recruit" },
+    tradeoffer = { label = "私聊报价", aliases = { "/w me offer", "/w offer" }, guard = "trade" },
+    tradeall = { label = "有多少收多少", aliases = { "all you have" }, guard = "trade" },
+    unlimited = { label = "不限量", aliases = { "unlimited" }, guard = "trade" },
+    tradeanytime = { label = "随时交易", aliases = { "trade anytime" }, guard = "trade" },
+    goldperstack = { label = "金币/组", aliases = { "g/stack" }, guard = "trade" },
+    legslot = { label = "护腿", aliases = { "pants", "leg" }, guard = "advert" },
+    ourbase = { label = "我方基地", aliases = { "our base" }, guard = "groupflow" },
+    insideourbase = { label = "我方基地内部", aliases = { "inside our base" }, guard = "groupflow" },
+    carrybombs = { label = "把炸弹送到对方城门", aliases = { "carry bombs to their gate" }, guard = "groupflow" },
+    killasap = { label = "尽快击杀", aliases = { "kill asap" }, guard = "groupflow" },
 }
 
 -- BEGIN GENERATED WLK LEXICON
@@ -819,7 +836,7 @@ P.concepts["wlk_halls_of_lightning"] = { label = "闪电大厅", aliases = { "ha
 P.concepts["wlk_the_culling_of_stratholme"] = { label = "净化斯坦索姆", aliases = { "the culling of stratholme", "culling of stratholme", "cos" }, wlk = true, rules = { ["the culling of stratholme"] = "name", ["culling of stratholme"] = "game", ["cos"] = "game" }, category = "副本" }
 P.concepts["wlk_trial_of_the_champion"] = { label = "冠军的试炼", aliases = { "trial of the champion", "toc5", "toc" }, wlk = true, rules = { ["trial of the champion"] = "name", ["toc5"] = "game", ["toc"] = "dungeon" }, category = "副本" }
 P.concepts["wlk_random_dungeon_finder"] = { label = "随机地下城", aliases = { "random dungeon finder", "rdf" }, wlk = true, rules = { ["random dungeon finder"] = "name", ["rdf"] = "game" }, category = "副本" }
-P.concepts["wlk_random_heroic"] = { label = "随机英雄地下城", aliases = { "random heroic", "rdf hc", "rdhc" }, wlk = true, rules = { ["random heroic"] = "name", ["rdf hc"] = "game", ["rdhc"] = "game" }, category = "副本" }
+P.concepts["wlk_random_heroic"] = { label = "随机英雄地下城", aliases = { "random heroic", "rdf hc", "rdhc", "rhc", "rdf h", "df hc" }, wlk = true, rules = { ["random heroic"] = "name", ["rdf hc"] = "game", ["rdhc"] = "game", ["rhc"] = "game", ["rdf h"] = "game", ["df hc"] = "game" }, category = "副本" }
 P.concepts["wlk_stop_dps"] = { label = "停止输出", aliases = { "stop dps" }, wlk = true, rules = { ["stop dps"] = "flow" }, category = "副本流程" }
 P.concepts["wlk_switch_target"] = { label = "切换目标", aliases = { "switch target", "swap target" }, wlk = true, rules = { ["switch target"] = "flow", ["swap target"] = "game" }, category = "副本流程" }
 P.concepts["wlk_switch_to_adds"] = { label = "转火小怪", aliases = { "switch to adds" }, wlk = true, rules = { ["switch to adds"] = "flow" }, category = "副本流程" }
@@ -1334,7 +1351,7 @@ function P.Translate(raw, db, context)
 
     -- Underscores are separators only in an anchored recruitment advertisement.
     -- Their mapped raw bytes remain intact outside a replaced known phrase.
-    local opening = text:gsub("^[%s\001]+", "")
+    local opening = text:gsub("^[%s:;!%-\001]+", "")
     if opening:match("^lf[mg]_") then text = text:gsub("_", " ") end
     -- Split only supported dungeon compounds and numeric role prefixes. Raw text
     -- is untouched; the expanded text is used solely for boundary matching.
@@ -1406,7 +1423,7 @@ function P.Translate(raw, db, context)
         end
         return text:find(info.pattern)
     end
-    opening = text:gsub("^[%s\001]+", "")
+    opening = text:gsub("^[%s:;!%-\001]+", "")
     -- Bracketed intent prefixes ([WTB], [LFG], ...) anchor like the bare word.
     opening = opening:gsub("^%[%s*wt([bs])%s*%]", "wt%1")
     opening = opening:gsub("^%[%s*lf([mg])%s*%]", "lf%1")
@@ -1430,16 +1447,17 @@ function P.Translate(raw, db, context)
         return false
     end
     local raid = anyRaidWord(text)
-    local raidOpening = opening:match("^fresh icc%f[^%w_]") ~= nil
-    if not raidOpening then
-        for _, name in ipairs(RAID_WORDS) do
-            if opening:match(raidOpenPatterns[name]) then raidOpening = true break end
-        end
+    -- Fresh ToC/RS use the same raid-prefix rules as fresh ICC. Only the
+    -- context view changes; mapped display text keeps the original prefix.
+    local raidPrefix=opening:gsub("^fresh%s+", "")
+    local raidOpening = false
+    for _, name in ipairs(RAID_WORDS) do
+        if raidPrefix:match(raidOpenPatterns[name]) then raidOpening = true break end
     end
     -- LF alone is ambiguous. An explicit positive count followed by a known
     -- role identifies a recruitment request without guessing from its tail.
     local dungeon = word("fos") or word("pos") or word("foss") or word("poss")
-        or word("rdf") or word("rdhc") or word("hor") or word("dongon")
+        or word("rdf") or word("rdhc") or word("rhc") or word("df hc") or word("hor") or word("dongon")
     local lfCount, lfRoleStart = opening:match("^lf%s+(%d+)x?%s+()")
     local countedRecruit = false
     if lfCount and tonumber(lfCount) > 0 then
@@ -1504,9 +1522,19 @@ function P.Translate(raw, db, context)
         or startsRole(lookingTail:gsub("^%d+x?%s+", "")))
     local roleRoster = startsRole(opening) and (raid or dungeon)
         and (word("for") or word("and") or word("join"))
-    local questRoster = raw:find("|Hquest:24589:",1,true)
+    local weeklyQuest = raw:find("|Hquest:24589:",1,true) or raw:find("|Hquest:24586:",1,true)
+    local questRoster = weeklyQuest
         and (startsRole(opening) or (opening:match("^need%s+") and
             startsRole(opening:gsub("^need%s+", ""):gsub("^%d+x?%s+", ""))))
+    local queueRoster = (word("que") or word("queue")) and startsRole(opening)
+        and (opening:find("%f[%d]%d+%s*%-%s*%d+%f[^%d]") or word("normal") or word("hc"))
+    -- A weekly raid or Black Temple achievement link supplies the activity
+    -- when its body starts with a role request. Never scan link labels as prose.
+    local linkedRaidRoster = (weeklyQuest or raw:find("|Hachievement:697:",1,true))
+        and (opening:match("^need%s+all%f[^%w_]") or
+            (opening:match("^need%s+") and startsRole(opening:gsub("^need%s+", ""):gsub("^%d+x?%s*", ""))))
+    linkedRaidRoster = linkedRaidRoster or (weeklyQuest and hasCountedRole(text)
+        and (opening:match("^lf%f[^%w_]") or opening:match("^need%f[^%w_]")))
     -- "rogue 5.5 lf icc 25", "1 dps HOR nm", "UH DK ... LF partner": a role
     -- opens the message and a context word follows; bare "war is hell" stays out.
     local roleOpening = false
@@ -1543,10 +1571,10 @@ function P.Translate(raw, db, context)
     local recruit = opening:match("^lf[mg]%f[^%w_]") or opening:match("^looking for more%f[^%w_]")
         or opening:match("^looking for group%f[^%w_]")
         or countedRecruit or needRoleRaid or guildRecruit or arenaRecruit or shortRecruit or eofRoster
-        or lookingRoster or roleRoster or questRoster or guildSeeker or roleOpening
+        or lookingRoster or roleRoster or questRoster or linkedRaidRoster or queueRoster or guildSeeker or roleOpening
         or needAllRaid or countedRoles
         or (dungeon and (opening:match("^fos") or opening:match("^pos") or opening:match("^hor")
-            or opening:match("^rdf") or word("need")))
+            or opening:match("^rdf") or opening:match("^rhc%f[^%w_]") or word("need")))
         or (raidOpening and (word("need") or word("lf all") or word("lfm")))
         or (word("warglaive") and word("offhand"))
         or (raidOpening and (word("frost") or word("nothing ress") or word("nothing res") or word("free roll")))
@@ -1705,7 +1733,11 @@ function P.Translate(raw, db, context)
                 and not head:match("%f[%w_]%d+%s+$")
                 and (numberedRole or not tail:match("^%s*[%+%-=]?%s*%d")
                     or tail:match("^%s*%d+%s*/%s*%d+"))
+        elseif guard == "bearrole" then
+            if alias == "bear" and text:sub(stop+1):match("^%s+mount%f[^%w_]") then return false end
+            return recruit or (trade and (word("druid") or word("feral")))
         elseif guard == "restodruid" then
+            if alias == "tree" then return recruit and not trade end
             if alias == "rdude" then return recruit and (word("heal") or word("healer") or word("healers") or word("heals")) end
             return recruit or trade
         elseif guard == "sindy" then return alias ~= "sindi" or zones.icc
@@ -1758,9 +1790,10 @@ function P.Translate(raw, db, context)
         elseif guard == "level" then return trade or roleRoster
         elseif guard == "guildlootsystem" then return guildRecruit and (alias ~= "loot" or text:sub(stop+1):match("^%s*:"))
         elseif guard == "guild" then return guildRecruit
-        elseif guard == "weekly" then return recruit and raid and not guildRecruit
+        elseif guard == "weekly" then return recruit and (raid or weeklyQuest) and not guildRecruit
         elseif guard == "guildweekly" then return guildRecruit
         elseif guard == "raidtrade" then return raidTrade
+        elseif guard == "groupflow" then return context and context.group
         elseif guard == "arena" then return arenaRecruit
         elseif guard == "shortrecruit" then return shortRecruit
         elseif guard == "raidachievement" then return recruit and (raid or guildRecruit)
@@ -1806,7 +1839,7 @@ function P.Translate(raw, db, context)
         elseif guard == "tocloot" then
             -- ToC25 loot shorthand: BOE + Crusader Orbs + Patterns. This is
             -- not the generic BOP binding abbreviation or ICC's Primo/SFS list.
-            return recruit and toc25
+            return recruit and toc25 and not (alias:match("^bop%s") and actor("paladin",start))
         elseif guard == "rubybackloot" then
             local tail = text:sub(stop + 1)
             return recruit and word("rs") and text:find("%f[%d]25%f[^%d]")
@@ -1831,7 +1864,7 @@ function P.Translate(raw, db, context)
             local listAfter = after:match("^%s*%(?%s*([%a%s+%-]+)") or ""
             local list = " " .. listBefore .. " " .. listAfter .. " "
             return list:find("%f[%w_]boe%f[^%w_]") or list:find("%f[%w_]sfs%f[^%w_]")
-                or list:find("%f[%w_]sts%f[^%w_]")
+                or list:find("%f[%w_]sts%f[^%w_]") or list:find("%f[%w_]cts%f[^%w_]")
                 or (word("rs") and list:find("%f[%w_]shaman hands%f[^%w_]"))
                 or list:find("%f[%w_]primos?%f[^%w_]")
                 or (word("rs") and text:find("%f[%d]25%f[^%d]")
@@ -1839,6 +1872,13 @@ function P.Translate(raw, db, context)
                 or (word("icc") and (list:find("b%+p%f[^%w_]") or list:find("%f[%w_]bp%f[^%w_]")
                     or list:find("%f[%w_]muradin%f[^%w_]")))
                 or list:find("%f[%w_]boes%f[^%w_]")
+                or list:find("%f[%w_]warglaives?%f[^%w_]") or list:find("%f[%w_]azzinot%f[^%w_]")
+                or (word("voa") and (list:find("%f[%w_]mount%f[^%w_]")
+                    or ((list:find("%f[%w_]pve%f[^%w_]") or list:find("%f[%w_]pvp%f[^%w_]")
+                        or list:find("%f[%w_]pants%f[^%w_]") or list:find("%f[%w_]leg%f[^%w_]"))
+                        and (list:find("%f[%w_]mage%f[^%w_]") or list:find("%f[%w_]feral%f[^%w_]")
+                            or list:find("%f[%w_]warr%f[^%w_]") or list:find("%f[%w_]dk%f[^%w_]")
+                            or list:find("%f[%w_]pally%f[^%w_]") or list:find("%f[%w_]rsham%f[^%w_]")))))
         elseif guard == "raidsize" or guard == "moreneeded" then
             return recruit and text:sub(1, start - 1):match("%f[%d]%d+%s*$") ~= nil
         elseif guard == "fulltrail" then
