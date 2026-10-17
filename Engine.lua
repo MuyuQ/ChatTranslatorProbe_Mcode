@@ -4,7 +4,7 @@ local P = McodeChatProbe
 local unpack = unpack
 local function pack(...) return { n = select("#", ...), ... } end
 P.Pack = pack
-P.version = "0.17.10"
+P.version = "0.17.11"
 
 -- Use the event language field, never words in the player's message body.
 function P.IsCommonLanguage(language)
@@ -17,6 +17,27 @@ function P.ShouldRecordLanguage(language)
 end
 
 P.concepts = {
+    vocab_guild = { label = "公会", aliases = { "guilds", "guild" } },
+    vocab_pve = { label = "副本玩法", aliases = { "pve" } },
+    vocab_pvp = { label = "玩家对战", aliases = { "pvp" } },
+    vocab_items = { label = "物品", aliases = { "items", "item" }, guard = "vocabulary" },
+    vocab_players = { label = "玩家", aliases = { "players", "player", "people", "ppl" }, guard = "vocabulary" },
+    vocab_raid = { label = "团队副本", aliases = { "raids", "raid" }, guard = "vocabulary" },
+    vocab_group = { label = "队伍", aliases = { "groups", "group" }, guard = "vocabulary" },
+    vocab_offline = { label = "离线", aliases = { "offline" } },
+    vocab_replace = { label = "替换", aliases = { "replacing", "replace" }, guard = "vocabulary" },
+    vocab_equipment = { label = "装备", aliases = { "equipment", "gear" }, guard = "vocabulary" },
+    vocab_information = { label = "详情", aliases = { "information", "info" }, guard = "vocabulary" },
+    vocab_requirements = { label = "要求", aliases = { "requirements", "requirement", "required" }, guard = "vocabulary" },
+    vocab_experience = { label = "经验", aliases = { "experience" }, guard = "vocabulary" },
+    vocab_roster = { label = "团队名单", aliases = { "rosters", "roster" }, guard = "vocabulary" },
+    vocab_inviteme = { label = "请组我", aliases = { "invite me", "inve me", "inv me" } },
+    vocab_fullgroup = { label = "已经满员", aliases = { "full guys", "we full", "we are full", "group is full" } },
+    vocab_noneed = { label = "不需要", aliases = { "do not need", "don't need", "no need" } },
+    vocab_nodiscord = { label = "不要求Discord", aliases = { "no discord" }, guard = "vocabulary" },
+    vocab_welcome = { label = "欢迎", aliases = { "welcome" }, guard = "vocabulary" },
+    vocab_dedicated = { label = "投入的", aliases = { "dedicated" }, guard = "vocabulary" },
+    vocab_coreteam = { label = "主力团队", aliases = { "core raid team", "core team" }, guard = "vocabulary" },
     disc = { label = "戒牧", aliases = { "discipline priest", "disc priest", "discpriest", "disciplinepriest", "disco", "disci", "discp", "disc" }, role = true, guard = "disc" },
     shadow = { label = "暗牧", aliases = { "shadow priest", "shadowpriest", "spriest", "sh priest", "shp", "sp" }, role = true, guard = "shadow" },
     rsham = { label = "奶萨", aliases = { "restoration shaman", "restro", "resto shaman", "restoshaman", "restorationshaman", "rshaman", "rshammy", "rshama", "rshamnmy", "rshamy", "rshami", "rshmy", "rsham", "rcham", "rshamm", "rshamn" }, role = true },
@@ -174,11 +195,11 @@ P.concepts = {
     fullgem = { label = "宝石齐全", aliases = { "full gem", "full gems" }, guard = "raidrequirement" },
     fullgemsenchant = { label = "宝石和附魔齐全", aliases = { "full gem and enchant", "full gem and ench", "gem enchat full" }, guard = "raidrequirement" },
     semiguild = { label = "半公会团", aliases = { "half guild run", "semi guild run", "semi-grun", "semi grun", "semigrun" }, guard = "raidrequirement" },
-    classrequest = { label = "职业", aliases = { "class" }, guard = "roster" },
+    classrequest = { label = "职业", aliases = { "classes", "class" }, guard = "roster" },
     rolerequest = { label = "职责", aliases = { "role" }, guard = "roster" },
     randomhealer = { label = "任意治疗职业", aliases = { "random heal" }, guard = "roster" },
     fewdps = { label = "少量输出", aliases = { "few dps" }, guard = "roster" },
-    grouploot = { label = "队伍分配", aliases = { "group loot", "grp loot" }, guard = "raidrequirement" },
+    grouploot = { label = "队伍分配", aliases = { "group loot", "grp loot", "grouploot" }, guard = "raidrequirement" },
     maxboss = { label = "多打Boss", aliases = { "going max boss", "max boss" }, guard = "raidrequirement" },
     havetime = { label = "需预留时间", aliases = { "must have time", "have time" }, guard = "raidrequirement" },
     replaceafk = { label = "替换AFK", aliases = { "replace afk", "replase afk ppl", "replace afk ppl" }, guard = "raidrequirement" },
@@ -296,7 +317,7 @@ P.concepts = {
     crit = { label = "暴击", aliases = { "critical", "crit" }, guard = "advert" },
     hit = { label = "命中", aliases = { "hit" }, guard = "advert" },
     arp = { label = "护甲穿透", aliases = { "armor penetration", "armor pen", "arp" }, guard = "advert" },
-    ty = { label = "谢谢", aliases = { "tysm", "thx", "tyty", "tks", "ty" } },
+    ty = { label = "谢谢", aliases = { "tysm", "thx", "tyty", "tks", "ty", "thank you", "thanks" } },
     disenchant = { label = "分解", aliases = { "disenchants", "disenchant" } },
     portal = { label = "开门", aliases = { "portals", "portal" } },
     stonard = { label = "斯通纳德", aliases = { "stonard" } },
@@ -316,7 +337,7 @@ P.concepts = {
     ready = { label = "就绪", aliases = { "rdy", "ready" }, guard = "recruit" },
     queue = { label = "排队", aliases = { "que", "queue" }, guard = "recruit" },
     classrun = { label = "职业团", aliases = { "class runs", "class run" }, guard = "recruit" },
-    trinket = { label = "饰品", aliases = { "trinkets", "trinket" }, guard = "advert" },
+    trinket = { label = "饰品", aliases = { "trinkets", "trinket", "trincks" }, guard = "advert" },
     weapon = { label = "武器", aliases = { "weapons", "weapon", "wepon" }, guard = "advert" },
     titles = { label = "头衔", aliases = { "titles", "title" }, guard = "advert" },
     brain = { label = "带脑子", aliases = { "brain" }, guard = "recruit" },
@@ -324,7 +345,7 @@ P.concepts = {
     atm = { label = "现在", aliases = { "atm" }, guard = "recruit" },
     warglaive = { label = "蛋刀", aliases = { "warglaives", "warglaive", "azzinot" }, guard = "recruit" },
     offhand = { label = "副手", aliases = { "offhand", "off-hand", "off hand" }, guard = "recruit" },
-    must = { label = "必须", aliases = { "must have", "must wis", "must be" }, guard = "raidrequirement" },
+    must = { label = "必须", aliases = { "must have", "must wis", "must be", "must" }, guard = "raidrequirement" },
     free = { label = "免费", aliases = { "free" }, guard = "recruit" },
     customized = { label = "定制团", aliases = { "customized runs", "customized run", "custom runs", "custom run" }, guard = "recruit" },
     freeroll = { label = "免费掷点", aliases = { "free roll", "free rolls" }, guard = "recruit" },
@@ -894,7 +915,7 @@ P.concepts["wlk_adds"] = { label = "小怪", aliases = { "adds" }, wlk = true, r
 P.concepts["wlk_cooldown"] = { label = "冷却时间", aliases = { "cooldown", "cd" }, wlk = true, rules = { ["cooldown"] = "flow", ["cd"] = "game" }, category = "副本流程" }
 P.concepts["wlk_kite"] = { label = "风筝", aliases = { "kite" }, wlk = true, rules = { ["kite"] = "flow" }, category = "副本流程" }
 P.concepts["wlk_aggro"] = { label = "仇恨", aliases = { "aggro" }, wlk = true, rules = { ["aggro"] = "flow" }, category = "副本流程" }
-P.concepts["wlk_wipe"] = { label = "灭团", aliases = { "wipe" }, wlk = true, rules = { ["wipe"] = "flow" }, category = "副本流程" }
+P.concepts["wlk_wipe"] = { label = "灭团", aliases = { "wipe", "wipes" }, wlk = true, rules = { ["wipe"] = "flow", ["wipes"] = "flow" }, category = "副本流程" }
 P.concepts["wlk_ms_os"] = { label = "主天赋优先于副天赋", aliases = { "ms>os", "ms > os" }, wlk = true, rules = { ["ms>os"] = "flow", ["ms > os"] = "game" }, category = "副本流程" }
 P.concepts["wlk_rebuff"] = { label = "补增益", aliases = { "rebuff" }, wlk = true, rules = { ["rebuff"] = "flow" }, category = "副本流程" }
 P.sharedAliases = {
@@ -1341,6 +1362,16 @@ function P.Translate(raw, db, context)
     if not visible then return nil end
     local text
     text, starts, stops = mappedNormalize(visible, starts, stops)
+    -- Plain web addresses are not WoW hyperlinks. Mask their analysis bytes
+    -- without moving the raw offsets or feeding URL words into context checks.
+    if text:find("://",1,true) or text:find("www.",1,true) or text:find("discord.gg/",1,true) then
+        for _, pattern in ipairs({"https?://%S+", "www%.%S+", "discord%.gg/%S+"}) do
+            text = text:gsub(pattern, function(url)
+                protected = true
+                return string.rep(" ", #url)
+            end)
+        end
+    end
     -- Preserve a leading guild tag even when it contains dungeon or class aliases.
     -- Spaces keep the normalized-to-raw offsets intact; matching resumes after it.
     local guildTagStart, guildTagStop = text:find("^%s*<[^<>]+>")
@@ -1824,6 +1855,8 @@ function P.Translate(raw, db, context)
             if alias == "rs" and actor("dk", start) and not text:sub(stop + 1):match("^%s*%d") then return false end
             if context and context.group and (entry.id == "icc" or entry.id == "lk" or entry.id == "tank" or entry.id == "healer" or entry.id == "dps") then return true end
             return recruit or text == alias or #alias > 8
+        elseif guard == "vocabulary" then
+            return game or trade
         elseif guard == "advert" then
             return recruit or trade or text == alias
         elseif guard == "gunshipgs" then
