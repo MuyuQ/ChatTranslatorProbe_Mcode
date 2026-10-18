@@ -4,7 +4,7 @@ local P = McodeChatProbe
 local unpack = unpack
 local function pack(...) return { n = select("#", ...), ... } end
 P.Pack = pack
-P.version = "0.17.13"
+P.version = "0.17.14"
 
 -- Use the event language field, never words in the player's message body.
 function P.IsCommonLanguage(language)
@@ -17,6 +17,10 @@ function P.ShouldRecordLanguage(language)
 end
 
 P.concepts = {
+    esweekend = { label = "周六和周日", aliases = { "sáb y dom", "sab y dom", "sÁb y dom" }, guard = "spanishguild" },
+    essaturday = { label = "周六", aliases = { "sáb", "sab", "sÁb" }, guard = "spanishguild" },
+    essunday = { label = "周日", aliases = { "dom", "domingo" }, guard = "spanishguild" },
+    eslootroll = { label = "掷点分配", aliases = { "loot por roll", "loot x roll" }, guard = "spanishguild" },
     dktank = { label = "DK坦克", aliases = { "dk tank", "dktank", "dk tanks" }, guard = "roster", role = true },
     seekjewelcrafter = { label = "寻找珠宝加工师", aliases = { "need jewelcrafting", "need jawelcrafting", "lf jewelcrafter", "lf jewelcrafting" } },
     seektailor = { label = "寻找裁缝", aliases = { "lf tailoring", "lf tailor", "lf tairloing" } },
@@ -148,7 +152,7 @@ P.concepts = {
     raidactivity = { label = "团队活动", aliases = { "raids activity", "raid activity" }, guard = "recruit" },
     applyguild = { label = "申请加入公会", aliases = { "apply for guild" }, guard = "recruit" },
     dkp = { label = "DKP 积分分配", aliases = { "dkp" } },
-    guildverb = { label = "招募", aliases = { "we are recruiting", "is recruiting", "recruiting", "seeking", "looking for raiders" }, guard = "guild" },
+    guildverb = { label = "招募", aliases = { "we are recruiting", "is recruiting", "recruiting", "seeking", "looking for raiders", "recluta para", "recluta" }, guard = "guild" },
     endguild = { label = "高端公会", aliases = { "end-game guild", "end game guild" }, guard = "guild" },
     internationalguild = { label = "国际高端公会", aliases = { "international end game guild" }, guard = "guild" },
     progressionguild = { label = "PvE开荒公会", aliases = { "progression pve guild" }, guard = "guild" },
@@ -187,7 +191,7 @@ P.concepts = {
     lastdps = { label = "最后一个输出位置", aliases = { "last dps" }, guard = "shortrecruit" },
     lasthealer = { label = "最后一个治疗位置", aliases = { "last healer", "last heal" }, guard = "shortrecruit" },
     lasttank = { label = "最后一个坦克位置", aliases = { "last tank" }, guard = "shortrecruit" },
-    whisperinfo = { label = "私聊获取更多信息", aliases = { "wisp for more info", "whisp for more info" }, guard = "advert" },
+    whisperinfo = { label = "私聊获取更多信息", aliases = { "wisp for more info", "whisp for more info", "whisp para info", "whisper para info" }, guard = "advert" },
     whisperaninvite = { label = "私聊申请进组", aliases = { "whisp me for an invite", "whisper me for an invite" }, guard = "guild" },
     gems = { label = "宝石", aliases = { "gems", "gem", "sockets", "socket" }, guard = "recruit" },
     guildroster = { label = "招募玩家补齐团队阵容", aliases = { "looking for players to fill our raid roster", "looking for players to fill raid roster" }, guard = "guild" },
@@ -1214,6 +1218,10 @@ local function scanVisible(text)
                 control(i, i + 1); i = i + 2
             elseif marker == "||" then
                 emit("|", i, i + 1); control(i, i + 1); i = i + 2
+            elseif marker == "| " or marker == "|\t" or i == len then
+                -- A whitespace-delimited chat separator is a literal pipe,
+                -- not a link/color escape. Preserve its original raw byte.
+                emit("|", i, i); i = i + 1
             else
                 return nil -- Unknown or malformed control text: preserve it without analysis.
             end
@@ -1554,6 +1562,10 @@ function P.Translate(raw, db, context)
             needRoleRaid = true
         end
     end
+    -- A tagged guild explicitly recruiting for a known raid supplies enough
+    -- context for shared game terms; this does not change blocking rules.
+    local spanishGuildRecruit = guildTagStart and opening:match("^recluta%s+para%f[^%w_]")
+        and (raid or word("lod"))
     local guildRecruit = (word("guild") and (word("recruiting") or word("seeking")))
         or (guildTagStart and opening:match("^is recruiting%f[^%w_]"))
         or ((guildTagStart or word("guild")) and word("looking for players") and word("raid roster"))
@@ -1562,6 +1574,7 @@ function P.Translate(raw, db, context)
         or (word("recruiting") and (word("melee") or word("dps") or word("heal") or word("tank")
             or word("spec") or word("class")))
         or (guildTagStart and (word("looking for raiders") or word("filling")))
+        or spanishGuildRecruit
     local arenaRecruit = word("lf arena") or word("lf arena parner") or word("lf arena partner") or word("looking for arena partner")
         or word("looking for a 2v2 partner") or word("looking for 2v2 partner")
         or word("lf partner") or word("lf 2 v2") or word("lf 2 vs2") or word("lf 3 v3") or word("lf 5 v5")
@@ -1904,6 +1917,7 @@ function P.Translate(raw, db, context)
         elseif guard == "raidrequirement" then return recruit and raid
         elseif guard == "level" then return trade or roleRoster
         elseif guard == "guildlootsystem" then return guildRecruit and (alias ~= "loot" or text:sub(stop+1):match("^%s*:"))
+        elseif guard == "spanishguild" then return spanishGuildRecruit
         elseif guard == "guild" then return guildRecruit
         elseif guard == "weekly" then return recruit and (raid or weeklyQuest or weeklyRequest or word("weekly") or word("weekley")) and not guildRecruit
         elseif guard == "guildweekly" then return guildRecruit
