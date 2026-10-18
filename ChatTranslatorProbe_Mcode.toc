@@ -2,7 +2,7 @@
 ## Title: |cff88ddff聊天助手|r
 ## Notes: /chatassist 打开设置。离线翻译、可选广告屏蔽与重复消息去重；保留 /ctprobe。
 ## Author: Mcode
-## Version: 0.17.12
+## Version: 0.17.13
 ## SavedVariables: McodeChatProbeDB
 ## OptionalDeps: ElvUI
 Engine.lua
