@@ -4,7 +4,7 @@ local P = McodeChatProbe
 local unpack = unpack
 local function pack(...) return { n = select("#", ...), ... } end
 P.Pack = pack
-P.version = "0.17.14"
+P.version = "0.17.15"
 
 -- Use the event language field, never words in the player's message body.
 function P.IsCommonLanguage(language)
@@ -1122,6 +1122,36 @@ for _, group in ipairs(aliasGroups) do
     group.rank = _
     group.tokens = literalTokens(group.alias)
 end
+-- A plain chat body can skip expensive normalization and matching when none of
+-- its original words can start a known alias or a built-in compound split.
+-- The pattern list mirrors splitMapped below; unknown/dotted words stay full-path.
+local aliasFirstTokens = {}
+for _, group in ipairs(aliasGroups) do
+    local first = group.tokens[1]
+    if first then aliasFirstTokens[first] = true end
+end
+local function hasPotentialAlias(raw)
+    local lower, from = raw:lower(), 1
+    while from <= #lower do
+        local first, last = lower:find("[%w_]+", from)
+        if not first then return false end
+        local token = lower:sub(first, last)
+        if aliasFirstTokens[token] then return true end
+        local hasLetter, hasDigit = token:find("%a"), token:find("%d")
+        if hasLetter and hasDigit then
+            if token:match("^icc%d") or token:match("^rs%d") or token:match("^ruby%d")
+                or token:match("^togc%d") or token:match("^toc10") or token:match("^toc25")
+                or token:match("^voa10") or token:match("^voa25")
+                or token:match("^%d+x%a") or token:match("^%d+%a")
+                or token:match("^gs%d") or token:match("%d+more$") then return true end
+        end
+        if not hasDigit and (token:match("^rs.*hc$") or token:match("^rs.*nm$")
+            or token:match("^rdfhc$") or token:match("^rdfnm$")) then return true end
+        if token:find("_") and (token:match("^lf[gm]_") or token:match("^lf%d+m_")) then return true end
+        from = last + 1
+    end
+    return false
+end
 -- Groups indexed by their first token: the message's own words pull the
 -- candidate list, which is then restored to global longest-first rank order.
 local groupsByFirstToken = {}
@@ -1377,10 +1407,12 @@ local function annotateText(raw, matches, starts, stops, db)
 end
 
 function P.Translate(raw, db, context)
+    if type(raw) ~= "string" then return nil end
     -- Localized DKP-addon bookkeeping is already readable; do not expand its
     -- DKP labels into a second chat line or change player names in those notices.
-    if type(raw) == "string" and raw:match("^QDKP2?>") and
+    if raw:match("^QDKP2?>") and
         (raw:find("获得",1,true) or raw:find("消费",1,true) or raw:find("购买",1,true)) then return nil end
+    if not hasPotentialAlias(raw) then return nil end
     local visible, protected, starts, stops, controls = P.VisibleText(raw)
     if not visible then return nil end
     local text
