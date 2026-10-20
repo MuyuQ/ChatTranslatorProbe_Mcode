@@ -18,6 +18,17 @@ function P.ResetState()
 end
 
 function P.Initialize()
+    local stored = McodeChatProbeDB
+    if type(stored) == "table" and ((tonumber(stored.assistantSchema) or 0) > 1
+        or (tonumber(stored.paletteVersion) or 0) > 3) then
+        P.db = nil
+        if not P.storageError and DEFAULT_CHAT_FRAME then
+            DEFAULT_CHAT_FRAME:AddMessage("|cff88ddff聊天助手：|r存档来自更高版本，已保留原数据；请安装对应版本。聊天辅助已暂停。")
+        end
+        P.storageError = true
+        return
+    end
+    P.storageError = nil
     P.FlushRecords(P.state,P.db)
     if type(McodeChatProbeDB) ~= "table" then McodeChatProbeDB = {} end
     local db = McodeChatProbeDB
@@ -25,8 +36,8 @@ function P.Initialize()
     if type(db.translate) ~= "table" then db.translate = {} end
     if type(db.dedup) ~= "table" then db.dedup = { CHANNEL = true } end
     if type(db.channelDedup) ~= "table" then db.channelDedup = {} end
-    if db.assistantSchema~=1 then
-        db.dedup.YELL=true
+    if (tonumber(db.assistantSchema) or 0)<1 then
+        if db.dedup.YELL == nil then db.dedup.YELL=true end
         db.assistantSchema=1
     end
     if type(db.dedupEnabled)~="boolean" then db.dedupEnabled=true end
@@ -61,7 +72,7 @@ function P.Initialize()
     if type(db.captureEnabled)~="boolean" then db.captureEnabled=true end
     if type(db.records)~="table" then db.records={} end
     for _,key in ipairs({"missed","blocked"}) do
-        if type(db.records[key])~="table" then db.records[key]={} end
+        P.ValidateRecords(db, key)
         local limit=key=="missed" and 1000 or 100
         while #db.records[key]>limit do table.remove(db.records[key],1) end
     end
@@ -71,12 +82,7 @@ function P.Initialize()
     if db.display ~= "mixed" and db.display ~= "annotate" and db.display ~= "terms" then db.display = "mixed" end
     if type(db.hideCommon) ~= "boolean" then db.hideCommon = true end
     if type(db.colorByCategory) ~= "boolean" then db.colorByCategory = true end
-    if db.paletteVersion ~= 3 then
-        -- Palette revisions (0.8.1 calmer, 0.8.4 vivid) intentionally reset
-        -- stored colors once per revision; later custom choices stick.
-        db.colors = {}
-        db.paletteVersion = 3
-    end
+    if (tonumber(db.paletteVersion) or 0) < 3 then db.paletteVersion = 3 end
     if type(db.colors) ~= "table" then db.colors = {} end
     for category in pairs(P.defaultColors) do db.colors[category]=P.ColorHex(db,category) end
     P.db = db
@@ -114,7 +120,8 @@ function P.RefreshOptions()
     if P.options.colored then P.options.colored:SetChecked(P.db.colorByCategory) end
     for _,control in ipairs(P.options.extraChecks or {}) do control:SetChecked(control.get()) end
     if P.options.recordSummary then
-        P.options.recordSummary:SetText("漏译样本 "..#P.db.records.missed.." / 1000；屏蔽样本 "..#P.db.records.blocked.." / 100")
+        P.options.recordSummary:SetText("漏译样本 "..#P.db.records.missed.." / 1000；屏蔽样本 "..#P.db.records.blocked.." / 100"
+            .. (P.db.records.invalid and "；已隔离异常记录 "..#P.db.records.invalid or ""))
     end
     if P.options.unifiedSeconds then
         P.options.unifiedSeconds:SetText("统一间隔：" .. tostring(P.db.dedupSeconds) .. " 秒（点击切换）")
@@ -268,7 +275,7 @@ function P.CreateOptions()
     -- backdrop gives the list column (and the scrollbar inside it) a visible
     -- background, matching the keyword edit box.
     local function shade(frame)
-        frame:SetBackdrop({bgFile="Interface\ChatFrame\ChatFrameBackground"})
+        frame:SetBackdrop({bgFile="Interface\\ChatFrame\\ChatFrameBackground"})
         frame:SetBackdropColor(0, 0, 0, 0.35)
     end
 
@@ -632,6 +639,7 @@ end
 
 function P.Install()
     if not P.db then P.Initialize() end
+    if P.storageError then return end
     install(_G, "ChatFrame_MessageEventHandler", "default")
     install(_G, "SetItemRef", "itemref")
     for index = 1, 10 do
@@ -827,6 +835,7 @@ SLASH_MCODECHATPROBE1 = "/ctprobe"
 SLASH_MCODECHATPROBE2 = "/chatassist"
 SlashCmdList.MCODECHATPROBE = function(text)
     if not P.db then P.Initialize() end
+    if P.storageError then printLocal("存档来自更高版本，辅助已暂停；请安装对应版本。"); return end
     local command, rest = (text or ""):match("^%s*(%S*)%s*(.-)%s*$")
     command = command:lower()
     if command == "perf" then

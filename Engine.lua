@@ -4,7 +4,7 @@ local P = McodeChatProbe
 local unpack = unpack
 local function pack(...) return { n = select("#", ...), ... } end
 P.Pack = pack
-P.version = "0.17.15"
+P.version = "0.17.16"
 
 -- Use the event language field, never words in the player's message body.
 function P.IsCommonLanguage(language)
@@ -2359,6 +2359,58 @@ function P.NeedsCapture(raw,hint)
     return visible:find("%a%a")~=nil
 end
 
+local function finite(value, fallback)
+    value = tonumber(value)
+    if not value or value ~= value or value == math.huge or value == -math.huge then return fallback end
+    return value
+end
+
+function P.ValidateRecords(db, kind)
+    local records = db.records[kind]
+    if type(records) ~= "table" then records = {}; db.records[kind] = records end
+    local valid, byKey = {}, {}
+    for _, entry in ipairs(records) do
+        if type(entry) == "table" and type(entry.key) == "string" and entry.key ~= ""
+            and type(entry.raw) == "string" and type(entry.author) == "string" then
+            entry.count = math.max(0, finite(entry.count, 1))
+            entry.first = finite(entry.first, 0); entry.last = finite(entry.last, entry.first)
+            for _, field in ipairs({"category","channel","reason","visible","hint","version","language"}) do
+                if entry[field] ~= nil and type(entry[field]) ~= "string" then entry[field] = nil end
+            end
+            local previous = byKey[entry.key]
+            if previous then previous.count = previous.count + entry.count
+            else valid[#valid + 1] = entry; byKey[entry.key] = entry end
+        else
+            if type(db.records.invalid) ~= "table" then db.records.invalid = {} end
+            local invalid = db.records.invalid
+            invalid[#invalid + 1] = { kind = kind, entry = entry, reason = "invalid record fields" }
+            while #invalid > 100 do table.remove(invalid, 1) end
+        end
+    end
+    for i = #records, 1, -1 do records[i] = nil end
+    for i, entry in ipairs(valid) do records[i] = entry end
+    return records
+end
+
+function P.AuxError(state, err)
+    state.stats.errors = state.stats.errors + 1
+    local key = tostring(err)
+    state.auxErrors = state.auxErrors or {}
+    if not state.auxErrors[key] and (state.auxErrorCount or 0) < 32 then
+        state.auxErrors[key] = true; state.auxErrorCount = (state.auxErrorCount or 0) + 1
+        if type(geterrorhandler) == "function" then
+            local ok, handler = pcall(geterrorhandler)
+            if ok and type(handler) == "function" then pcall(handler, "[聊天助手] 辅助处理失败，原聊天继续：" .. key) end
+        end
+    end
+end
+
+local function recordSafely(state, ...)
+    local ok, result = pcall(P.RecordMessage, state, ...)
+    if ok then return result end
+    state.recordIndex = {}; P.AuxError(state, result)
+end
+
 function P.RecordMessage(state,db,kind,event,args,hint,reason,history,now,captureEligible)
     if history or db.captureEnabled~=true or not P.ShouldRecordLanguage(args[3]) then return end
     local key,category=P.MessageKey(event,args); if not key then return end
@@ -2380,6 +2432,7 @@ function P.RecordMessage(state,db,kind,event,args,hint,reason,history,now,captur
     -- Detect list replacement as well as external length changes (clear/load).
     local index = state.recordIndex[kind]
     if not index or index.list ~= records or index.count ~= #records then
+        records = P.ValidateRecords(db, kind)
         index = {list=records, count=#records, nodes={}}
         for position,entry in ipairs(records) do
             local node={item=entry,slot=position,previous=index.tail}
@@ -2430,7 +2483,7 @@ function P.FlushRecords(state,db)
     if not state or not db or type(db.records)~="table" then return end
     for kind,index in pairs(state.recordIndex) do
         local records=db.records[kind]
-        if records~=index.list or #records~=index.count then
+        if type(records)~="table" or records~=index.list or #records~=index.count then
             state.recordIndex[kind]=nil
         elseif index.dirty then
             local node,position=index.head,1
@@ -2731,17 +2784,19 @@ function P.Run(state, db, frame, event, args, history, invoke, clock)
     local now=clock()
     local seconds=P.DedupSeconds(db)
     prune(state,now)
-    local reason=P.EventBlockReason(state,db,event,args,history,now)
+    local filterOK, reason = pcall(P.EventBlockReason,state,db,event,args,history,now)
+    if not filterOK then P.AuxError(state,reason); return invoke() end
     if reason then
         if reason==P.guildRecruitmentLabel then state.stats.blockedGuild=state.stats.blockedGuild+1
         else state.stats.blockedAds=state.stats.blockedAds+1 end
-        P.RecordMessage(state,db,"blocked",event,args,nil,reason,history,now)
+        recordSafely(state,db,"blocked",event,args,nil,reason,history,now)
         return
     end
-    local record = P.Begin(state, db, event, args, history, now, frame.defaultLanguage, seconds)
+    local beginOK, record = pcall(P.Begin,state, db, event, args, history, now, frame.defaultLanguage, seconds)
+    if not beginOK then P.AuxError(state,record); return invoke() end
     if not record then return invoke() end
     if not record.foreignLanguage then
-        local eligible=P.RecordMessage(state,db,"missed",event,args,record.hint,nil,history,now,record.captureEligible)
+        local eligible=recordSafely(state,db,"missed",event,args,record.hint,nil,history,now,record.captureEligible)
         if eligible~=nil then record.captureEligible=eligible end
     end
     local hint=db.enabled and record.hint or nil
@@ -2753,13 +2808,15 @@ function P.Run(state, db, frame, event, args, history, invoke, clock)
         if self ~= frame or seen or type(text) ~= "string" or not text:find(candidate, 1, true) then
             return writer(self, text, ...)
         end
+        local prefix = spliceLine(text, args[1], "", candidate)
+        if not prefix then return writer(self, text, ...) end
         seen = true
         if record.hide then state.stats.hidden = state.stats.hidden + 1; return end
         local extras = pack(...)
         local linked = nil
-        if hint and db.inlineReplace ~= false then
+        if hint and db.inlineReplace ~= false and db.display ~= "terms" then
             local body = hint:gsub("^→ [^：]+：", "")
-            local newLine = body and body ~= "" and spliceLine(text, args[1], body, candidate) or nil
+            local newLine = body and body ~= "" and (prefix .. body) or nil
             if newLine then
                 state.originSeq = state.originSeq + 1
                 local id = tostring(state.originSeq)
@@ -2798,7 +2855,8 @@ function P.Run(state, db, frame, event, args, history, invoke, clock)
             if not hint then state.stats.withoutHint = state.stats.withoutHint + 1 end
             if record.foreignLanguage then state.stats.foreignLanguage = state.stats.foreignLanguage + 1 end
         end
-        P.Commit(state, record, clock())
+        local commitOK, commitError = pcall(P.Commit,state,record,clock())
+        if not commitOK then P.AuxError(state,commitError) end
         if hint and not linked then
             -- Link |r markers reset to AddMessage's RGB. Use the hint color as
             -- that base instead of the original channel color; retain metadata.
