@@ -1,0 +1,2 @@
+# Preserve verified worktree bytes; explicit CRLF paths have normalized Git objects.
+* -text
