@@ -64,6 +64,8 @@ WTF/Account/<账号>/SavedVariables/ChatTranslatorProbe_Mcode.lua
 
 词典已编入 `Engine.lua`。自定义屏蔽词用于隐藏消息，不是自定义翻译词典。`/chatassist label 中文解释` 只修改戒牧概念的中文解释，对 `disc/disco/disc priest/discipline priest` 共用；`/chatassist resetlabel` 恢复该项默认解释。
 
+需要自行补词时，按 [AI 词典更新指南](AI_DICTIONARY.md) 准备当前插件文件、筛选记录和验证样例。
+
 ## 状态与性能诊断
 
 输入 `/chatassist status` 查看运行版本、默认聊天和 ElvUI 接入、过滤、去重及采集计数。输出按窗口调用计数，不等于服务器消息条数；“未识别显示路径”也可能包含被其他过滤器或窗口规则正常隐藏的消息，不能直接当作错误数。
